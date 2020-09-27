@@ -52,8 +52,9 @@ export default {
         login() {
             this.$refs.loginFormRef.validate(async valid => {
                 if(!valid) return;
-                // const {data: res} = await this.$http.post("/login", this.loginForm);
-                // if (res.code !== 0) return this.$message.error("登陆失败！ ");
+                const {data: res} = await this.$http.post("/login", this.loginForm);
+                console.log(res)
+                if (res.code !== 1) return this.$message.error("登陆失败！ ");
                 this.$message.success("登陆成功")
 
                 // 将登录成功返回的token保存到sessionStorage

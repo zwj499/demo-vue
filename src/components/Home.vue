@@ -4,7 +4,7 @@
         <el-header height="150px">
             <div>
                 <img src="../assets/dnf.png" alt="">
-                <span>小骚逼系统</span>
+                <span>世界级大牛系统</span>
             </div>
             <el-button type='info' @click="logout">退出</el-button>
         </el-header>
