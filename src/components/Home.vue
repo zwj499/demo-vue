@@ -76,11 +76,21 @@ export default {
                     children: [
                         {
                             id: 301,
+                            authName: "职业",
+                            path: "career",
+                        },
+                        {
+                            id: 302,
+                            authName: "QQ账号",
+                            path: "qq_account",
+                        },
+                        {
+                            id: 303,
                             authName: "游戏角色",
                             path: "dnf_role",
                         },
                         {
-                            id: 302,
+                            id: 304,
                             authName: "记录",
                             path: "record",
                         }

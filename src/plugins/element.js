@@ -1,9 +1,9 @@
 import Vue from 'vue'
-import { 
-    Button, 
-    Form, 
-    FormItem, 
-    Input, 
+import {
+    Button,
+    Form,
+    FormItem,
+    Input,
     Message,
     Container,
     Header,
@@ -24,7 +24,12 @@ import {
     Tooltip,
     Pagination,
     Dialog,
-    MessageBox
+    MessageBox,
+    Tree,
+    Select,
+    Option,
+    Cascader,
+    InputNumber
 } from 'element-ui'
 
 Vue.use(Button)
@@ -50,5 +55,10 @@ Vue.use(Switch)
 Vue.use(Tooltip)
 Vue.use(Pagination)
 Vue.use(Dialog)
+Vue.use(Tree)
+Vue.use(Select)
+Vue.use(Option)
+Vue.use(Cascader)
+Vue.use(InputNumber)
 Vue.prototype.$message = Message
 Vue.prototype.$confirm = MessageBox.confirm

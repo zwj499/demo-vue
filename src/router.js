@@ -4,6 +4,9 @@ import Login from './components/Login.vue'
 import Home from './components/Home.vue'
 import Welcome from './components/Welcome.vue'
 import User from './components/user/User.vue'
+import Career from './components/dnf/Career'
+import QQAccount from './components/dnf/QQAccount'
+import Role from './components/dnf/Role'
 
 Vue.use(Router)
 
@@ -29,6 +32,18 @@ const router = new Router({
                 {
                     path: '/sys_user',
                     component: User
+                },
+                {
+                    path: '/career',
+                    component: Career
+                },
+                {
+                    path: '/qq_account',
+                    component: QQAccount
+                },
+                {
+                    path: '/dnf_role',
+                    component: Role
                 }
             ]
         }
