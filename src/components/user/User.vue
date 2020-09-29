@@ -143,20 +143,24 @@
         },
         methods: {
             async refreshUserList() {
-                const {data: res} = await this.$http.post('/sysUser/selectPage', {
+                this.queryInfo = {
                     name: '',
                     pageNo: 1,
                     pageSize: 10,
                     orderBy: 'id',
                     asc: true
-                });
-                if (res.code === 0) return this.$message.error(res.message)
-                this.userList = res.data.records
-                this.total = res.data.total
+                }
+                this.getUserList()
             },
             async getUserList() {
                 const {data: res} = await this.$http.post('/sysUser/selectPage', this.queryInfo);
-                if (res.code === 0) return this.$message.error(res.message)
+                if (res.code === 0)
+                    return this.$message.error(res.message)
+                if (res.data == null) {
+                    this.userList = []
+                    this.total = 0
+                    return
+                }
                 this.userList = res.data.records
                 this.total = res.data.total
             },

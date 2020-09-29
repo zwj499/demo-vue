@@ -7,6 +7,7 @@ import User from './components/user/User.vue'
 import Career from './components/dnf/Career'
 import QQAccount from './components/dnf/QQAccount'
 import Role from './components/dnf/Role'
+import Damage from "./components/dnf/Damage";
 
 Vue.use(Router)
 
@@ -44,6 +45,10 @@ const router = new Router({
                 {
                     path: '/dnf_role',
                     component: Role
+                },
+                {
+                    path: '/damage',
+                    component: Damage
                 }
             ]
         }

@@ -146,6 +146,11 @@
                 const {data: res} = await this.$http.post('/dnf/role/selectPage', this.queryInfo);
                 if (res.code === 0)
                     return this.$message.error(res.message)
+                if (res.data == null) {
+                    this.roleList = []
+                    this.total = 0
+                    return
+                }
                 this.roleList = res.data.records
                 for (let i = 0; i < this.roleList.length; i++) {
                     let role = this.roleList[i]

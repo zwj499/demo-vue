@@ -106,6 +106,11 @@
                 const {data: res} = await this.$http.post('/dnf/account/selectPage', this.queryInfo);
                 if (res.code === 0)
                     return this.$message.error(res.message)
+                if (res.data == null) {
+                    this.accountList = []
+                    this.total = 0
+                    return
+                }
                 this.accountList = res.data.records
                 for (let i=0; i<this.accountList.length; i++) {
                     let account = this.accountList[i]

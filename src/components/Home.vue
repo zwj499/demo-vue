@@ -91,8 +91,8 @@ export default {
                         },
                         {
                             id: 304,
-                            authName: "记录",
-                            path: "record",
+                            authName: "修炼场",
+                            path: "damage",
                         }
                     ]
                 }
