@@ -52,7 +52,7 @@
                 <el-form-item label="时长" prop="duration">
                     <el-input v-model="damageForm.duration" disabled></el-input>
                 </el-form-item>
-                <el-form-item label="角色" prop="role">
+                <el-form-item label="角色" prop="roleId">
                     <el-select v-model="damageForm.roleId" placeholder="请选择">
                         <el-option v-for="item in roleList" :key="item.id"
                                    :label="item.name" :value="item.id">

@@ -4,7 +4,7 @@
         <el-header height="150px">
             <div>
                 <img src="../assets/dnf.png" alt="">
-                <span><h1>无聊瞎逼逼</h1></span>
+                <span><h1>没事瞎逼逼</h1></span>
             </div>
             <el-button type='info' @click="logout">退出</el-button>
         </el-header>
@@ -93,6 +93,11 @@ export default {
                             id: 304,
                             authName: "修炼场",
                             path: "damage",
+                        },
+                        {
+                            id: 305,
+                            authName: "风暴航路",
+                            path: "storm_route",
                         }
                     ]
                 }

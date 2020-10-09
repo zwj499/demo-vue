@@ -8,6 +8,7 @@ import Career from './components/dnf/Career'
 import QQAccount from './components/dnf/QQAccount'
 import Role from './components/dnf/Role'
 import Damage from "./components/dnf/Damage";
+import StormRoute from "./components/dnf/StormRoute";
 
 Vue.use(Router)
 
@@ -49,6 +50,11 @@ const router = new Router({
                 {
                     path: '/damage',
                     component: Damage
+                }
+                ,
+                {
+                    path: '/storm_route',
+                    component: StormRoute
                 }
             ]
         }

@@ -31,17 +31,6 @@
                     <el-table-column label="所属账号" prop="account"></el-table-column>
                     <el-table-column label="创建时间" prop="createTime"></el-table-column>
                     <el-table-column label="更新时间" prop="updateTime"></el-table-column>
-                    <!--                    <el-table-column label="操作">-->
-                    <!--                        <template slot-scope="scope">-->
-                    <!--                            <el-button type="primary" icon="el-icon-edit" size="mini"-->
-                    <!--                                       @click="showEditDialog(scope.row.id)"></el-button>-->
-                    <!--                            <el-button type="danger" icon="el-icon-delete" size="mini"-->
-                    <!--                                       @click="deleteUserById(scope.row.id)" content="删除"></el-button>-->
-                    <!--                            <el-tooltip class="item" effect="dark" content="分配角色权限" placement="top" :enterable="false">-->
-                    <!--                                <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>-->
-                    <!--                            </el-tooltip>-->
-                    <!--                        </template>-->
-                    <!--                    </el-table-column>-->
                 </el-table>
 
                 <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
