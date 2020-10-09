@@ -8,32 +8,27 @@
         </el-breadcrumb>
 
 
-        <el-tabs type="card" v-model="monster" style="width: 100%" >
-            <el-tab-pane :key="item1" v-for="item1 in monsterList" :label="item1" :name="item1" @click="monster = item1" >
-                <el-tabs type="border-card" v-model="duration" style="width: 100%" >
-                    <el-tab-pane :key="item2" v-for="item2 in durationList" :label="item2" :name="item2" @click="duration = item2" >
+        <el-tabs type="card" v-model="monster" style="width: 100%">
+            <el-tab-pane :key="item1" v-for="item1 in monsterList" :label="item1" :name="item1"
+                         @click="monster = item1">
+                <el-tabs type="border-card" v-model="duration" style="width: 100%" @tab-click="refreshDamageList()">
+                    <el-tab-pane :key="item2" v-for="item2 in durationList" :label="item2" :name="item2"
+                                 @click="refreshDamageList()" onselect="refreshDamageList()">
                         <div style="margin-top: 15px;">
                             <el-row :gutter="20">
-<!--                                <el-col :span="7">-->
-<!--                                    <el-select v-model="value" placeholder="请选择">-->
-<!--                                        <el-option-->
-<!--                                                v-for="item in monsterList"-->
-<!--                                                :key="item.value"-->
-<!--                                                :label="item.label"-->
-<!--                                                :value="item.value">-->
-<!--                                        </el-option>-->
-<!--                                    </el-select>-->
-<!--                                </el-col>-->
                                 <el-col :sm="4">
-                                    <el-button type="primary" @click="addDialogVisible = true, refreshDamageForm(), getRoleList()">添加修炼场记录
+                                    <el-button type="primary"
+                                               @click="addDialogVisible = true, refreshDamageForm(), getRoleList()">
+                                        添加修炼场记录
                                     </el-button>
                                 </el-col>
                             </el-row>
 
-                            <el-table :data="damageList" style="width: 100%" border stripe>
+                            <el-table :data="damageList" style="width: 100%" border stripe
+                                      :default-sort="{prop: 'damage', order: 'descending'}">
                                 <el-table-column type="index"></el-table-column>
                                 <el-table-column label="角色" prop="roleName"></el-table-column>
-                                <el-table-column label="伤害" prop="damage"></el-table-column>
+                                <el-table-column label="伤害" sortable prop="damage"></el-table-column>
                                 <el-table-column label="创建时间" prop="createTime"></el-table-column>
                                 <el-table-column label="更新时间" prop="updateTime"></el-table-column>
                             </el-table>
@@ -65,7 +60,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="伤害" prop="duration">
-                    <el-input v-model="damageForm.damage" ></el-input>
+                    <el-input v-model="damageForm.damage"></el-input>
                 </el-form-item>
             </el-form>
 
@@ -117,7 +112,7 @@
                         {type: 'number', message: '打桩伤害必须为全数字', trigger: 'blur'}
                     ]
                 },
-                roleList:[]
+                roleList: []
             }
         },
         created() {
@@ -147,18 +142,19 @@
                     return this.$message.error('获取时长列表失败！')
                 return res.data
             },
-            async refreshDamageList(){
+            async refreshDamageList() {
+                console.log("duration", this.duration)
                 this.queryInfo = {
-                        monster: this.monster,
-                        duration: this.duration,
-                        pageNo: 1,
-                        pageSize: 10,
-                        orderBy: 'id',
-                        asc: true
+                    monster: this.monster,
+                    duration: this.duration,
+                    pageNo: 1,
+                    pageSize: 10,
+                    orderBy: 'id',
+                    asc: true
                 }
                 await this.getDamageList()
             },
-            async getDamageList(){
+            async getDamageList() {
                 const {data: res} = await this.$http.post('/dnf/damage/selectPage', this.queryInfo);
                 if (res.code === 0)
                     return this.$message.error(res.message)

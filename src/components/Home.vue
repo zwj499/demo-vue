@@ -4,7 +4,7 @@
         <el-header height="150px">
             <div>
                 <img src="../assets/dnf.png" alt="">
-                <span>世界级大牛系统</span>
+                <span><h1>无聊瞎逼逼</h1></span>
             </div>
             <el-button type='info' @click="logout">退出</el-button>
         </el-header>
@@ -169,5 +169,9 @@ export default {
     text-align: center;
     letter-spacing: 0.2em;
     cursor: pointer;
+}
+h1{
+    font-family: 楷体;
+    color: blueviolet;
 }
 </style>

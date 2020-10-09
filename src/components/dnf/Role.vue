@@ -18,7 +18,7 @@
                     </el-col>
                     <el-col :sm="4">
                         <el-button type="primary"
-                                   @click="addDialogVisible = true, queryAccountList(), queryCareerTrees()">添加账号
+                                   @click="addDialogVisible = true, queryAccountList(), queryCareerTrees()">添加角色
                         </el-button>
                     </el-col>
                 </el-row>
@@ -98,7 +98,7 @@
                 roleForm: {
                     accountId: '',
                     name: '',
-                    level: 1,
+                    level: 100,
                     career: ''
                 },
                 roleFormRules: {
