@@ -7,50 +7,114 @@
             <el-breadcrumb-item>风暴航路</el-breadcrumb-item>
         </el-breadcrumb>
 
-        <div style="margin-top: 15px;">
-            <el-row :gutter="20">
-                <el-col :sm="4">
-                    <el-select v-model="firstBoss" placeholder="请选择" @change="selectFirstBoss(firstBoss)">
-                        <el-option v-for="item in firstBossList" :key="item"
-                                   :label="item" :value="item">
-                        </el-option>
-                    </el-select>
-                </el-col>
-                <el-col :sm="4">
-                    <el-select v-model="secondBoss" placeholder="请选择" @change="refreshStormRouteList">
-                        <el-option v-for="item in secondBossList" :key="item"
-                                   :label="item" :value="item">
-                        </el-option>
-                    </el-select>
-                </el-col>
+        <el-tabs type="card" v-model="analysisType" style="width: 100%" @tab-click="refreshDamageList">
+            <el-tab-pane label="按地图分析" name="map"  >
+                <div style="margin-top: 15px;">
+                    <el-row :gutter="20">
+                        <el-col :sm="4">
+                            <el-select v-model="firstBoss" placeholder="请选择" @change="selectFirstBoss(firstBoss)">
+                                <el-option v-for="item in firstBossList" :key="item"
+                                           :label="item" :value="item">
+                                </el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :sm="4">
+                            <el-select v-model="secondBoss" placeholder="请选择" @change="refreshStormRouteList">
+                                <el-option v-for="item in secondBossList" :key="item"
+                                           :label="item" :value="item">
+                                </el-option>
+                            </el-select>
+                        </el-col>
 
-                <el-col :sm="6">
-                    <el-button type="primary"
-                               @click="addDialogVisible = true, queryAddFirstBossList(), getRoleList()">
-                        添加风暴航路通关记录
-                    </el-button>
-                </el-col>
+                        <el-col :sm="6">
+                            <el-button type="primary"
+                                       @click="addDialogVisible = true, queryAddFirstBossList()">
+                                添加风暴航路通关记录
+                            </el-button>
+                        </el-col>
 
-                <el-col :sm="3">
-                    <el-button icon="el-icon-refresh" @click="refreshStormRouteList" ></el-button>
-                </el-col>
-            </el-row>
+                        <el-col :sm="3">
+                            <el-button icon="el-icon-refresh" @click="refreshStormRouteList"></el-button>
+                        </el-col>
+                    </el-row>
 
-            <el-table :data="stormRouteList" style="width: 100%" border stripe >
-                <el-table-column type="index"></el-table-column>
-                <el-table-column label="角色" prop="roleName"></el-table-column>
-                <el-table-column label="通关时间" prop="passTimeString"></el-table-column>
-                <el-table-column label="创建时间" prop="createTime"></el-table-column>
-                <el-table-column label="更新时间" prop="updateTime"></el-table-column>
-            </el-table>
+                    <el-table :data="stormRouteList" style="width: 100%" border stripe
+                              :default-sort="{prop: 'passTime', order: 'ascending'}"
+                              @sort-change="sortChange">
+                        <el-table-column type="index"></el-table-column>
+                        <el-table-column label="角色" prop="roleName"></el-table-column>
+                        <el-table-column label="通关时间" prop="passTimeString" sortable="custom"></el-table-column>
+                        <el-table-column label="创建时间" prop="createTime"></el-table-column>
+                        <el-table-column label="更新时间" prop="updateTime"></el-table-column>
+                    </el-table>
 
-            <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                           :current-page="queryInfo.pageNo" :page-sizes="[1, 5, 10, 20]"
-                           :page-size="queryInfo.pageSize"
-                           layout="total, sizes, prev, pager, next, jumper" :total="total">
-            </el-pagination>
-        </div>
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                   :current-page="queryInfo.pageNo" :page-sizes="[1, 5, 10, 20]"
+                                   :page-size="queryInfo.pageSize"
+                                   layout="total, sizes, prev, pager, next, jumper" :total="total">
+                    </el-pagination>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="按角色分析" name="role">
+                <div style="margin-top: 15px;">
+                    <el-row :gutter="20">
+                        <el-col :sm="4">
+                            <el-select v-model="roleId" placeholder="请选择" @change="refreshStormRouteList">
+                                <el-option v-for="item in roleList" :key="item.id"
+                                           :label="item.name" :value="item.id">
+                                </el-option>
+                            </el-select>
+                        </el-col>
+                        <el-col :sm="6">
+                            <el-button type="primary"
+                                       @click="addDialogVisible = true, queryAddFirstBossList()">
+                                添加风暴航路通关记录
+                            </el-button>
+                        </el-col>
+                        <el-col :sm="3">
+                            <el-button icon="el-icon-refresh" @click="refreshStormRouteList"></el-button>
+                        </el-col>
+                    </el-row>
 
+                    <el-table :data="stormRouteList" style="width: 100%" border stripe
+                              :default-sort="{prop: 'passTime', order: 'ascending'}"
+                              @sort-change="sortChange">
+                        <el-table-column type="index"></el-table-column>
+                        <el-table-column label="第一Boss" prop="firstBoss"></el-table-column>
+                        <el-table-column label="第二Boss" prop="secondBoss"></el-table-column>
+                        <el-table-column label="通关时间" prop="passTimeString" sortable="custom"></el-table-column>
+                        <el-table-column label="创建时间" prop="createTime"></el-table-column>
+                        <el-table-column label="更新时间" prop="updateTime"></el-table-column>
+                    </el-table>
+
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                   :current-page="queryInfo.pageNo" :page-sizes="[1, 5, 10, 20]"
+                                   :page-size="queryInfo.pageSize"
+                                   layout="total, sizes, prev, pager, next, jumper" :total="total">
+                    </el-pagination>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="综合分析" name="comprehensive">
+                <div style="margin-top: 15px;">
+                    <el-table :data="stormRouteList" style="width: 100%" border stripe
+                              :default-sort="{prop: 'passTime', order: 'ascending'}"
+                              @sort-change="sortChange">
+                        <el-table-column type="index"></el-table-column>
+                        <el-table-column label="角色" prop="roleName"></el-table-column>
+                        <el-table-column label="第二Boss" prop="secondBoss"></el-table-column>
+                        <el-table-column label="通关时间" prop="passTimeString" sortable="custom"></el-table-column>
+                        <el-table-column label="创建时间" prop="createTime"></el-table-column>
+                        <el-table-column label="更新时间" prop="updateTime"></el-table-column>
+                    </el-table>
+
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                   :current-page="queryInfo.pageNo" :page-sizes="[1, 5, 10, 20]"
+                                   :page-size="queryInfo.pageSize"
+                                   layout="total, sizes, prev, pager, next, jumper" :total="total">
+                    </el-pagination>
+                </div>
+            </el-tab-pane>
+        </el-tabs>
 
         <el-dialog title="添加暴风航路通关记录" :visible.sync="addDialogVisible" width="30%">
             <el-form :model="stormRouteForm" :rules="stormRouteFormRules" ref="stormRouteFormRef" label-width="100px">
@@ -79,15 +143,15 @@
                 <el-form-item label="通关时长">
                     <el-row>
                         <el-col :span="6">
-                            <el-input v-model="stormRouteForm.minute" />
+                            <el-input v-model="stormRouteForm.minute"/>
                         </el-col>
-                        <el-col :span="2" >分</el-col>
+                        <el-col :span="2">分</el-col>
                         <el-col :span="6">
-                            <el-input v-model="stormRouteForm.second" />
+                            <el-input v-model="stormRouteForm.second"/>
                         </el-col>
-                        <el-col :span="2" >秒</el-col>
+                        <el-col :span="2">秒</el-col>
                         <el-col :span="6">
-                            <el-input v-model="stormRouteForm.millisecond" />
+                            <el-input v-model="stormRouteForm.millisecond"/>
                         </el-col>
                     </el-row>
                 </el-form-item>
@@ -106,13 +170,18 @@
     export default {
         data() {
             return {
+                analysisType: 'map',
                 firstBoss: '',
                 secondBoss: '',
+                roleId: 1,
                 firstBossList: [],
                 secondBossList: [],
+                roleList: [],
                 queryInfo: {
+                    analysisType: 'map',
                     firstBoss: '',
                     secondBoss: '',
+                    roleId: 1,
                     pageNo: 1,
                     pageSize: 10,
                     orderBy: 'id',
@@ -120,6 +189,10 @@
                 },
                 stormRouteList: [],
                 total: 0,
+
+                comprehensiveAnalysisList: [],
+                comprehensiveAnalysisTotal: 0,
+
                 addDialogVisible: false,
                 addFirstBossList: [],
                 addSecondBossList: [],
@@ -141,96 +214,119 @@
                     roleId: [
                         {required: true, message: '请选择角色', trigger: 'blur'}
                     ],
-                },
-                roleList: []
+                }
             }
         },
         created() {
-            this.init()
+            this.init();
         },
         methods: {
             async init() {
-                this.firstBossList = await this.queryFirstBossList()
-                this.firstBoss = this.firstBossList[0]
+                this.firstBossList = await this.queryFirstBossList();
+                this.firstBoss = this.firstBossList[0];
 
-                this.secondBossList = await this.querySecondBossList(this.firstBoss)
-                this.secondBoss = this.secondBossList[0]
+                this.secondBossList = await this.querySecondBossList(this.firstBoss);
+                this.secondBoss = this.secondBossList[0];
 
-                this.queryInfo.firstBoss = this.firstBoss
-                this.queryInfo.secondBoss = this.secondBoss
+                this.queryInfo.firstBoss = this.firstBoss;
+                this.queryInfo.secondBoss = this.secondBoss;
 
-                await this.getStormRouteList()
+                await this.getStormRouteList();
+
+                await this.getRoleList();
+                this.roleId = this.roleList[0].id;
 
             },
             async queryFirstBossList() {
                 const {data: res} = await this.$http.get('/dnf/stormRoute/firstBoss');
                 if (res.code !== 1)
-                    return this.$message.error('获取风暴航路第一Boss列表失败！')
+                    return this.$message.error('获取风暴航路第一Boss列表失败！');
                 return res.data
             },
             async querySecondBossList(firstBoss) {
                 const {data: res} = await this.$http.get(`/dnf/stormRoute/secondBoss?firstBoss=${firstBoss}`);
                 if (res.code !== 1)
-                    return this.$message.error('获取风暴航路第二Boss列表失败！')
+                    return this.$message.error('获取风暴航路第二Boss列表失败！');
                 return res.data
             },
             async selectFirstBoss(firstBoss) {
-                this.secondBossList = await this.querySecondBossList(firstBoss)
-                this.secondBoss = this.secondBossList[0]
+                this.secondBossList = await this.querySecondBossList(firstBoss);
+                this.secondBoss = this.secondBossList[0];
 
                 await this.refreshStormRouteList()
             },
             async refreshStormRouteList() {
                 this.queryInfo = {
+                    analysisType: this.analysisType,
                     firstBoss: this.firstBoss,
                     secondBoss: this.secondBoss,
+                    roleId: this.roleId,
                     pageNo: 1,
                     pageSize: 10,
                     orderBy: 'id',
                     asc: true
-                }
+                };
                 await this.getStormRouteList()
             },
             async getStormRouteList() {
                 const {data: res} = await this.$http.post('/dnf/stormRoute/selectPage', this.queryInfo);
                 if (res.code === 0)
-                    return this.$message.error(res.message)
+                    return this.$message.error(res.message);
                 if (res.data == null) {
-                    this.stormRouteList = []
-                    this.total = 0
+                    this.stormRouteList = [];
+                    this.total = 0;
                     return
                 }
-                this.stormRouteList = res.data.records
+                this.stormRouteList = res.data.records;
                 for (let i = 0; i < this.stormRouteList.length; i++) {
-                    let stormRoute = this.stormRouteList[i]
-                    stormRoute.createTime = this.formatTimeStamp(stormRoute.createTime)
+                    let stormRoute = this.stormRouteList[i];
+                    stormRoute.createTime = this.formatTimeStamp(stormRoute.createTime);
                     stormRoute.updateTime = this.formatTimeStamp(stormRoute.updateTime)
                 }
                 this.total = res.data.total
             },
+            // eslint-disable-next-line no-unused-vars
+            sortChange: function ({column, prop, order}) {
+                this.queryInfo.orderBy = (prop === 'passTimeString' ? 'passTime' : prop);
+                this.queryInfo.asc = order !== 'descending';
+                this.getStormRouteList()
+            },
+            async getComprehensiveAnalysisList() {
+                const {data: res} = await this.$http.post('/dnf/stormRoute/comprehensiveAnalysis', this.queryInfo);
+                console.log(res)
+                if (res.code === 0)
+                    return this.$message.error(res.message);
+                if (res.data == null) {
+                    this.comprehensiveAnalysisList = [];
+                    this.comprehensiveAnalysisTotal = 0;
+                    return
+                }
+                this.comprehensiveAnalysisList = res.data.records;
+                this.comprehensiveAnalysisTotal = res.data.total;
+            },
             handleSizeChange(newSize) {
-                this.queryInfo.pageSize = newSize
-                this.getRoleList()
+                this.queryInfo.pageSize = newSize;
+                this.getStormRouteList()
             },
             handleCurrentChange(newNo) {
-                this.queryInfo.pageNo = newNo
-                this.getRoleList()
+                this.queryInfo.pageNo = newNo;
+                this.getStormRouteList()
             },
             async getRoleList() {
                 const {data: res} = await this.$http.get('/dnf/role');
                 if (res.code === 0)
-                    return this.$message.error(res.message)
+                    return this.$message.error(res.message);
                 this.roleList = res.data
             },
             async queryAddFirstBossList() {
-                this.addFirstBossList = await this.queryFirstBossList()
-                this.stormRouteForm.firstBoss = this.addFirstBossList[0]
+                this.addFirstBossList = await this.queryFirstBossList();
+                this.stormRouteForm.firstBoss = this.addFirstBossList[0];
 
-                this.addSecondBossList = await this.querySecondBossList(this.stormRouteForm.firstBoss)
+                this.addSecondBossList = await this.querySecondBossList(this.stormRouteForm.firstBoss);
                 this.stormRouteForm.secondBoss = this.addSecondBossList[0]
             },
             async queryAddSecondBossList(firstBoss) {
-                this.addSecondBossList = await this.querySecondBossList(firstBoss)
+                this.addSecondBossList = await this.querySecondBossList(firstBoss);
                 this.stormRouteForm.secondBoss = this.addSecondBossList[0]
             },
             async addStormRoute() {
@@ -238,8 +334,8 @@
                 if (res.code !== 1) {
                     return this.$message.error('添加暴风航路通关记录失败！')
                 }
-                this.$message.success('添加暴风航路通关记录成功！')
-                await this.refreshStormRouteList()
+                this.$message.success('添加暴风航路通关记录成功！');
+                await this.refreshStormRouteList();
                 this.addDialogVisible = false
             },
             formatTimeStamp(timeStamp) {
@@ -255,6 +351,16 @@
                     + minute.substring(minute.length - 2, minute.length) + ":"
                     + second.substring(second.length - 2, second.length);
             }
+        },
+        watch: {
+            'analysisType': async function (val) { //监听切换状态-计划单
+                this.analysisType = val;
+                this.queryInfo.analysisType = val;
+                if (val === "comprehensive")
+                    await this.getComprehensiveAnalysisList();
+                else
+                    await this.refreshStormRouteList();
+            },
         }
     }
 </script>

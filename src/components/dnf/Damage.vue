@@ -12,8 +12,7 @@
             <el-tab-pane :key="item1" v-for="item1 in monsterList" :label="item1" :name="item1"
                          @click="monster = item1">
                 <el-tabs type="border-card" v-model="duration" style="width: 100%" @tab-click="refreshDamageList()">
-                    <el-tab-pane :key="item2" v-for="item2 in durationList" :label="item2" :name="item2"
-                                 @click="refreshDamageList()" onselect="refreshDamageList()">
+                    <el-tab-pane :key="item2" v-for="item2 in durationList" :label="item2" :name="item2">
                         <div style="margin-top: 15px;">
                             <el-row :gutter="20">
                                 <el-col :sm="4">
@@ -25,10 +24,11 @@
                             </el-row>
 
                             <el-table :data="damageList" style="width: 100%" border stripe
-                                      :default-sort="{prop: 'damage', order: 'descending'}">
+                                      :default-sort="{prop: 'damage', order: 'descending'}"
+                                      @sort-change="sortChange">
                                 <el-table-column type="index"></el-table-column>
                                 <el-table-column label="角色" prop="roleName"></el-table-column>
-                                <el-table-column label="伤害" sortable prop="damage"></el-table-column>
+                                <el-table-column label="伤害" sortable="custom" prop="damage"></el-table-column>
                                 <el-table-column label="创建时间" prop="createTime"></el-table-column>
                                 <el-table-column label="更新时间" prop="updateTime"></el-table-column>
                             </el-table>
@@ -116,7 +116,7 @@
             }
         },
         created() {
-            this.init()
+            this.init();
         },
         methods: {
             async init() {
@@ -143,7 +143,6 @@
                 return res.data
             },
             async refreshDamageList() {
-                console.log("duration", this.duration)
                 this.queryInfo = {
                     monster: this.monster,
                     duration: this.duration,
@@ -151,42 +150,48 @@
                     pageSize: 10,
                     orderBy: 'id',
                     asc: true
-                }
+                };
                 await this.getDamageList()
             },
             async getDamageList() {
                 const {data: res} = await this.$http.post('/dnf/damage/selectPage', this.queryInfo);
                 if (res.code === 0)
-                    return this.$message.error(res.message)
+                    return this.$message.error(res.message);
                 if (res.data == null) {
-                    this.damageList = []
-                    this.total = 0
+                    this.damageList = [];
+                    this.total = 0;
                     return
                 }
-                this.damageList = res.data.records
+                this.damageList = res.data.records;
                 for (let i = 0; i < this.damageList.length; i++) {
-                    let damage = this.damageList[i]
-                    damage.createTime = this.formatTimeStamp(damage.createTime)
+                    let damage = this.damageList[i];
+                    damage.createTime = this.formatTimeStamp(damage.createTime);
                     damage.updateTime = this.formatTimeStamp(damage.updateTime)
                 }
                 this.total = res.data.total
             },
+            // eslint-disable-next-line no-unused-vars
+            sortChange:function({column, prop, order}) {
+                this.queryInfo.orderBy = prop;
+                this.queryInfo.asc = order === 'ascending';
+                this.getDamageList()
+            },
             handleSizeChange(newSize) {
-                this.queryInfo.pageSize = newSize
-                this.getRoleList()
+                this.queryInfo.pageSize = newSize;
+                this.getDamageList()
             },
             handleCurrentChange(newNo) {
-                this.queryInfo.pageNo = newNo
-                this.getRoleList()
+                this.queryInfo.pageNo = newNo;
+                this.getDamageList()
             },
             refreshDamageForm() {
-                this.damageForm.monster = this.monster
+                this.damageForm.monster = this.monster;
                 this.damageForm.duration = this.duration
             },
             async getRoleList() {
                 const {data: res} = await this.$http.get('/dnf/role');
                 if (res.code === 0)
-                    return this.$message.error(res.message)
+                    return this.$message.error(res.message);
                 this.roleList = res.data
             },
             async addDamage() {
@@ -194,8 +199,8 @@
                 if (res.code !== 1) {
                     return this.$message.error('添加打桩记录失败！')
                 }
-                this.$message.success('添加打桩记录成功！')
-                await this.refreshDamageList()
+                this.$message.success('添加打桩记录成功！');
+                await this.refreshDamageList();
                 this.addDialogVisible = false
             },
             formatTimeStamp(timeStamp) {
