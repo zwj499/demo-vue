@@ -96,15 +96,15 @@
             </el-tab-pane>
             <el-tab-pane label="综合分析" name="comprehensive">
                 <div style="margin-top: 15px;">
-                    <el-table :data="stormRouteList" style="width: 100%" border stripe
-                              :default-sort="{prop: 'passTime', order: 'ascending'}"
-                              @sort-change="sortChange">
+                    <el-table :data="comprehensiveAnalysisList" style="width: 100%" border stripe
+                              :default-sort="{prop: 'avgPassTime', order: 'ascending'}"
+                              @sort-change="sortChangeForComprehensiveAnalysis">
                         <el-table-column type="index"></el-table-column>
                         <el-table-column label="角色" prop="roleName"></el-table-column>
-                        <el-table-column label="第二Boss" prop="secondBoss"></el-table-column>
-                        <el-table-column label="通关时间" prop="passTimeString" sortable="custom"></el-table-column>
-                        <el-table-column label="创建时间" prop="createTime"></el-table-column>
-                        <el-table-column label="更新时间" prop="updateTime"></el-table-column>
+                        <el-table-column label="平均通关时间" prop="avgPassTimeString" sortable="custom"></el-table-column>
+                        <el-table-column label="最快通关时间" prop="minPassTimeString" sortable="custom"></el-table-column>
+                        <el-table-column label="最慢通关时间" prop="maxPassTimeString" sortable="custom"></el-table-column>
+                        <el-table-column label="通关副本数" prop="passDungeonsNumber" sortable="custom"></el-table-column>
                     </el-table>
 
                     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -292,6 +292,8 @@
                 this.getStormRouteList()
             },
             async getComprehensiveAnalysisList() {
+                if (this.queryInfo.orderBy === 'id')
+                    this.queryInfo.orderBy = 'avgPassTime'
                 const {data: res} = await this.$http.post('/dnf/stormRoute/comprehensiveAnalysis', this.queryInfo);
                 console.log(res)
                 if (res.code === 0)
@@ -303,6 +305,19 @@
                 }
                 this.comprehensiveAnalysisList = res.data.records;
                 this.comprehensiveAnalysisTotal = res.data.total;
+            },
+            // eslint-disable-next-line no-unused-vars
+            sortChangeForComprehensiveAnalysis: function ({column, prop, order}) {
+                if (prop === 'maxPassTimeString')
+                    this.queryInfo.orderBy = 'maxPassTime'
+                else if (prop === 'minPassTimeString')
+                    this.queryInfo.orderBy = 'minPassTime'
+                else if (prop === 'avgPassTimeString')
+                    this.queryInfo.orderBy = 'avgPassTime'
+                else
+                    this.queryInfo.orderBy = prop
+                this.queryInfo.asc = order !== 'descending';
+                this.getComprehensiveAnalysisList()
             },
             handleSizeChange(newSize) {
                 this.queryInfo.pageSize = newSize;
