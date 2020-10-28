@@ -8,7 +8,41 @@
         </el-breadcrumb>
 
         <el-tabs type="card" v-model="analysisType" style="width: 100%" @tab-click="refreshDamageList">
-            <el-tab-pane label="按地图分析" name="map"  >
+            <el-tab-pane label="记录总览" name="all">
+                <div style="margin-top: 15px;">
+                    <el-row :gutter="20">
+                        <el-col :sm="6">
+                            <el-button type="primary"
+                                       @click="addDialogVisible = true, queryAddFirstBossList()">
+                                添加风暴航路通关记录
+                            </el-button>
+                        </el-col>
+
+                        <el-col :sm="3">
+                            <el-button icon="el-icon-refresh" @click="refreshStormRouteList"></el-button>
+                        </el-col>
+                    </el-row>
+
+                    <el-table :data="stormRouteList" style="width: 100%" border stripe
+                              :default-sort="{prop: 'passTime', order: 'ascending'}"
+                              @sort-change="sortChange">
+                        <el-table-column type="index" :index="indexMethod"></el-table-column>
+                        <el-table-column label="角色" prop="roleName" sortable="custom"></el-table-column>
+                        <el-table-column label="第一Boss" prop="firstBoss" sortable="custom"></el-table-column>
+                        <el-table-column label="第二Boss" prop="secondBoss" sortable="custom"></el-table-column>
+                        <el-table-column label="通关时间" prop="passTimeString" sortable="custom"></el-table-column>
+                        <el-table-column label="创建时间" prop="createTime" sortable="custom"></el-table-column>
+                        <el-table-column label="更新时间" prop="updateTime" sortable="custom"></el-table-column>
+                    </el-table>
+
+                    <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                                   :current-page="queryInfo.pageNo" :page-sizes="[1, 5, 10, 20]"
+                                   :page-size="queryInfo.pageSize"
+                                   layout="total, sizes, prev, pager, next, jumper" :total="total">
+                    </el-pagination>
+                </div>
+            </el-tab-pane>
+            <el-tab-pane label="按地图分析" name="map">
                 <div style="margin-top: 15px;">
                     <el-row :gutter="20">
                         <el-col :sm="4">
@@ -41,11 +75,11 @@
                     <el-table :data="stormRouteList" style="width: 100%" border stripe
                               :default-sort="{prop: 'passTime', order: 'ascending'}"
                               @sort-change="sortChange">
-                        <el-table-column type="index"></el-table-column>
-                        <el-table-column label="角色" prop="roleName"></el-table-column>
+                        <el-table-column type="index" :index="indexMethod"></el-table-column>
+                        <el-table-column label="角色" prop="roleName" sortable="custom"></el-table-column>
                         <el-table-column label="通关时间" prop="passTimeString" sortable="custom"></el-table-column>
-                        <el-table-column label="创建时间" prop="createTime"></el-table-column>
-                        <el-table-column label="更新时间" prop="updateTime"></el-table-column>
+                        <el-table-column label="创建时间" prop="createTime" sortable="custom"></el-table-column>
+                        <el-table-column label="更新时间" prop="updateTime" sortable="custom"></el-table-column>
                     </el-table>
 
                     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -79,12 +113,12 @@
                     <el-table :data="stormRouteList" style="width: 100%" border stripe
                               :default-sort="{prop: 'passTime', order: 'ascending'}"
                               @sort-change="sortChange">
-                        <el-table-column type="index"></el-table-column>
-                        <el-table-column label="第一Boss" prop="firstBoss"></el-table-column>
-                        <el-table-column label="第二Boss" prop="secondBoss"></el-table-column>
+                        <el-table-column type="index" :index="indexMethod"></el-table-column>
+                        <el-table-column label="第一Boss" prop="firstBoss" sortable="custom"></el-table-column>
+                        <el-table-column label="第二Boss" prop="secondBoss" sortable="custom"></el-table-column>
                         <el-table-column label="通关时间" prop="passTimeString" sortable="custom"></el-table-column>
-                        <el-table-column label="创建时间" prop="createTime"></el-table-column>
-                        <el-table-column label="更新时间" prop="updateTime"></el-table-column>
+                        <el-table-column label="创建时间" prop="createTime" sortable="custom"></el-table-column>
+                        <el-table-column label="更新时间" prop="updateTime" sortable="custom"></el-table-column>
                     </el-table>
 
                     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -96,11 +130,24 @@
             </el-tab-pane>
             <el-tab-pane label="综合分析" name="comprehensive">
                 <div style="margin-top: 15px;">
+                    <el-row :gutter="20">
+                        <el-col :sm="6">
+                            <el-button type="primary"
+                                       @click="addDialogVisible = true, queryAddFirstBossList()">
+                                添加风暴航路通关记录
+                            </el-button>
+                        </el-col>
+
+                        <el-col :sm="3">
+                            <el-button icon="el-icon-refresh" @click="refreshComprehensiveAnalysisList"></el-button>
+                        </el-col>
+                    </el-row>
+
                     <el-table :data="comprehensiveAnalysisList" style="width: 100%" border stripe
                               :default-sort="{prop: 'avgPassTime', order: 'ascending'}"
                               @sort-change="sortChangeForComprehensiveAnalysis">
-                        <el-table-column type="index"></el-table-column>
-                        <el-table-column label="角色" prop="roleName"></el-table-column>
+                        <el-table-column type="index" :index="indexMethod"></el-table-column>
+                        <el-table-column label="角色" prop="roleName" sortable="custom"></el-table-column>
                         <el-table-column label="平均通关时间" prop="avgPassTimeString" sortable="custom"></el-table-column>
                         <el-table-column label="最快通关时间" prop="minPassTimeString" sortable="custom"></el-table-column>
                         <el-table-column label="最慢通关时间" prop="maxPassTimeString" sortable="custom"></el-table-column>
@@ -110,7 +157,7 @@
                     <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
                                    :current-page="queryInfo.pageNo" :page-sizes="[1, 5, 10, 20]"
                                    :page-size="queryInfo.pageSize"
-                                   layout="total, sizes, prev, pager, next, jumper" :total="total">
+                                   layout="total, sizes, prev, pager, next, jumper" :total="comprehensiveAnalysisTotal">
                     </el-pagination>
                 </div>
             </el-tab-pane>
@@ -170,7 +217,7 @@
     export default {
         data() {
             return {
-                analysisType: 'map',
+                analysisType: 'all',
                 firstBoss: '',
                 secondBoss: '',
                 roleId: 1,
@@ -178,7 +225,7 @@
                 secondBossList: [],
                 roleList: [],
                 queryInfo: {
-                    analysisType: 'map',
+                    analysisType: 'all',
                     firstBoss: '',
                     secondBoss: '',
                     roleId: 1,
@@ -287,9 +334,27 @@
             },
             // eslint-disable-next-line no-unused-vars
             sortChange: function ({column, prop, order}) {
-                this.queryInfo.orderBy = (prop === 'passTimeString' ? 'passTime' : prop);
+                if (prop === 'passTimeString')
+                    this.queryInfo.orderBy = 'passTime';
+                else if (prop === 'roleName')
+                    this.queryInfo.orderBy = 'roleId';
+                else
+                    this.queryInfo.orderBy = prop
                 this.queryInfo.asc = order !== 'descending';
                 this.getStormRouteList()
+            },
+            async refreshComprehensiveAnalysisList() {
+                this.queryInfo = {
+                    analysisType: this.analysisType,
+                    firstBoss: this.firstBoss,
+                    secondBoss: this.secondBoss,
+                    roleId: this.roleId,
+                    pageNo: 1,
+                    pageSize: 10,
+                    orderBy: 'avgPassTime',
+                    asc: true
+                };
+                await this.getComprehensiveAnalysisList()
             },
             async getComprehensiveAnalysisList() {
                 if (this.queryInfo.orderBy === 'id')
@@ -309,11 +374,13 @@
             // eslint-disable-next-line no-unused-vars
             sortChangeForComprehensiveAnalysis: function ({column, prop, order}) {
                 if (prop === 'maxPassTimeString')
-                    this.queryInfo.orderBy = 'maxPassTime'
+                    this.queryInfo.orderBy = 'maxPassTime';
                 else if (prop === 'minPassTimeString')
-                    this.queryInfo.orderBy = 'minPassTime'
+                    this.queryInfo.orderBy = 'minPassTime';
                 else if (prop === 'avgPassTimeString')
-                    this.queryInfo.orderBy = 'avgPassTime'
+                    this.queryInfo.orderBy = 'avgPassTime';
+                else if (prop === 'roleName')
+                    this.queryInfo.orderBy = 'roleId';
                 else
                     this.queryInfo.orderBy = prop
                 this.queryInfo.asc = order !== 'descending';
@@ -321,11 +388,20 @@
             },
             handleSizeChange(newSize) {
                 this.queryInfo.pageSize = newSize;
-                this.getStormRouteList()
+                if (this.queryInfo.analysisType === 'comprehensive')
+                    this.getComprehensiveAnalysisList()
+                else
+                    this.getStormRouteList()
             },
             handleCurrentChange(newNo) {
                 this.queryInfo.pageNo = newNo;
-                this.getStormRouteList()
+                if (this.queryInfo.analysisType === 'comprehensive')
+                    this.getComprehensiveAnalysisList()
+                else
+                    this.getStormRouteList()
+            },
+            indexMethod(index) {
+                return index + 1 + this.queryInfo.pageSize * (this.queryInfo.pageNo - 1)
             },
             async getRoleList() {
                 const {data: res} = await this.$http.get('/dnf/role');
