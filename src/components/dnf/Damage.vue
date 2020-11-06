@@ -39,10 +39,14 @@
                                            layout="total, sizes, prev, pager, next, jumper" :total="total">
                             </el-pagination>
                         </div>
+
+
                     </el-tab-pane>
                 </el-tabs>
             </el-tab-pane>
         </el-tabs>
+
+        <div id="myChart" :style="{width: '500px', height: '500px', align: 'center'}"></div>
 
         <el-dialog title="添加修炼场记录" :visible.sync="addDialogVisible" width="30%">
             <el-form :model="damageForm" :rules="damageFormRules" ref="damageFormRef" label-width="100px">
@@ -73,6 +77,8 @@
 </template>
 
 <script>
+    import echarts from 'echarts'
+
     export default {
         data() {
             return {
@@ -112,11 +118,15 @@
                         {type: 'number', message: '打桩伤害必须为全数字', trigger: 'blur'}
                     ]
                 },
-                roleList: []
+                roleList: [],
+                chartsDamageList: [],
             }
         },
         created() {
             this.init();
+        },
+        mounted() {
+            this.drawLine();
         },
         methods: {
             async init() {
@@ -129,6 +139,7 @@
                 this.queryInfo.duration = this.duration
 
                 await this.getDamageList()
+                await this.listDamage()
             },
             async queryMonsterList() {
                 const {data: res} = await this.$http.get('/dnf/damage/monsters');
@@ -171,7 +182,7 @@
                 this.total = res.data.total
             },
             // eslint-disable-next-line no-unused-vars
-            sortChange:function({column, prop, order}) {
+            sortChange: function ({column, prop, order}) {
                 this.queryInfo.orderBy = prop;
                 this.queryInfo.asc = order === 'ascending';
                 this.getDamageList()
@@ -202,6 +213,72 @@
                 this.$message.success('添加打桩记录成功！');
                 await this.refreshDamageList();
                 this.addDialogVisible = false
+            },
+            async listDamage() {
+                const {data: res} = await this.$http.get('/dnf/damage/list');
+                if (res.code !== 1)
+                    return this.$message.error('获取列表失败！');
+                this.chartsDamageList = res.data;
+                return res.data;
+            },
+            async drawLine() {
+                // 基于准备好的dom，初始化echarts实例
+                let myChart = echarts.init(document.getElementById('myChart'));
+                // 绘制图表
+                let damageList = await this.listDamage();
+
+                let cMap = new Map();
+                let dMap = new Map();
+
+                var colorList = [
+                    '#3dac2e', '#1b76c3', '#FCCE10', '#E87C25', '#27727B',
+                    '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                    '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                ];
+                var index = 0;
+
+                for (var i = 0; i<  damageList.length; i++) {
+                    let d = damageList[i]
+                    if (!cMap.has(d.accountId)) {
+                        cMap.set(d.accountId, colorList[index]);
+                        index++;
+                    }
+                    dMap.set(d.roleName, cMap.get(d.accountId))
+                }
+
+                myChart.setOption({
+                    title: {
+                        text: '20s绿沙袋打桩伤害',
+                        color: '#3853c3',
+                        textAlign: 'auto'
+                    },
+                    tooltip: {},
+                    xAxis: {
+
+                    },
+                    yAxis: {
+                        data: damageList.map(x => x.roleName),
+                        show: false
+                    },
+                    series: [{
+                        name: '伤害',
+                        type: 'bar',
+                        barWidth : 30,
+                        itemStyle: {
+                            normal: {
+                                color: function (params) {
+                                    return dMap.get(params.name)
+                                },
+                                label: {
+                                    show: true,
+                                    position: 'right',
+                                    formatter: '{b}'
+                                }
+                            }
+                        },
+                        data: damageList.map(x => x.damage)
+                    }]
+                });
             },
             formatTimeStamp(timeStamp) {
                 const unixDate = new Date(timeStamp);
